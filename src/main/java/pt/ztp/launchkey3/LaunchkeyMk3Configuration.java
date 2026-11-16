@@ -13,6 +13,7 @@ import de.mossgrabers.framework.configuration.ISettingsUI;
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.midi.ArpeggiatorMode;
+import pt.ztp.launchkey3.controller.DrumPadHitColor;
 
 
 /**
@@ -25,8 +26,11 @@ public class LaunchkeyMk3Configuration extends AbstractConfiguration
 {
     /** ID for lighting the selected pad in the Drum mode. */
     public static final Integer HIGHLIGHT_SELECTED_DRUM_PAD = Integer.valueOf (NEXT_SETTING_ID);
+    /** ID for the colour of the played pads in the Drum mode. */
+    public static final Integer DRUM_PAD_HIT_COLOR          = Integer.valueOf (NEXT_SETTING_ID + 1);
 
     private boolean             isHighlightSelectedDrumPad;
+    private DrumPadHitColor     drumPadHitColor             = DrumPadHitColor.DEFAULT;
 
 
     /**
@@ -73,6 +77,13 @@ public class LaunchkeyMk3Configuration extends AbstractConfiguration
             this.notifyObservers (HIGHLIGHT_SELECTED_DRUM_PAD);
         });
         this.isSettingActive.add (HIGHLIGHT_SELECTED_DRUM_PAD);
+
+        final IEnumSetting drumPadHitColorSetting = globalSettings.getEnumSetting ("Drum Pad Hit Colour", CATEGORY_PADS, DrumPadHitColor.getLabels (), DrumPadHitColor.DEFAULT.getLabel ());
+        drumPadHitColorSetting.addValueObserver (value -> {
+            this.drumPadHitColor = DrumPadHitColor.fromLabel (value);
+            this.notifyObservers (DRUM_PAD_HIT_COLOR);
+        });
+        this.isSettingActive.add (DRUM_PAD_HIT_COLOR);
     }
 
 
@@ -84,5 +95,16 @@ public class LaunchkeyMk3Configuration extends AbstractConfiguration
     public boolean isHighlightSelectedDrumPad ()
     {
         return this.isHighlightSelectedDrumPad;
+    }
+
+
+    /**
+     * Get the colour of the pads which are played in the Drum mode.
+     *
+     * @return The colour
+     */
+    public DrumPadHitColor getDrumPadHitColor ()
+    {
+        return this.drumPadHitColor;
     }
 }
