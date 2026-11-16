@@ -1,0 +1,59 @@
+// Written by Jürgen Moßgraber - mossgrabers.de
+// (c) 2017-2026
+// Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
+// Modified by akaztp (2026) for the LaunchKeyMK3 project - see README.md
+
+package pt.ztp.launchkey3;
+
+import java.util.List;
+
+import de.mossgrabers.framework.configuration.AbstractConfiguration;
+import de.mossgrabers.framework.configuration.ISettingsUI;
+import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
+import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.midi.ArpeggiatorMode;
+
+
+/**
+ * The configuration settings for Launchkey Mk3.
+ *
+ * @author Jürgen Moßgraber
+ */
+public class LaunchkeyMk3Configuration extends AbstractConfiguration
+{
+    /**
+     * Constructor.
+     *
+     * @param host The DAW host
+     * @param valueChanger The value changer
+     * @param arpeggiatorModes The available arpeggiator modes
+     */
+    public LaunchkeyMk3Configuration (final IHost host, final IValueChanger valueChanger, final List<ArpeggiatorMode> arpeggiatorModes)
+    {
+        super (host, valueChanger, arpeggiatorModes);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
+    {
+        // ----------------------------------------------------------------
+        // Transport
+
+        this.activateBehaviourOnStopSetting (globalSettings);
+        this.activateBehaviourOnPauseSetting (globalSettings);
+        this.activateDoubleClickPlayButton (globalSettings);
+        this.activateDoubleClickStopButton (globalSettings);
+        this.activateRecordButtonSetting (globalSettings);
+        this.activateShiftedRecordButtonSetting (globalSettings);
+
+        // ----------------------------------------------------------------
+        // Workflow
+
+        this.activateExcludeDeactivatedItemsSetting (globalSettings);
+        this.activateIncludeMasterSetting (globalSettings);
+        this.activateNewClipLengthSetting (globalSettings);
+        this.activateSelectClipOnLaunchSetting (globalSettings);
+    }
+}
