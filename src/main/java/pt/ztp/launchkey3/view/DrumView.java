@@ -143,17 +143,33 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
     }
 
 
-    /** {@inheritDoc} */
+    /**
+     * As AbstractDrumView.getDrumPadColor, but the selected pad only lights up if set in the
+     * configuration, and while the selected track has no drum machine, the pads show the colours of
+     * the last one.
+     */
     @Override
     protected String getDrumPadColor (final int index, final IDrumPadBank drumPadBank, final boolean isRecording)
     {
-        final String color = super.getDrumPadColor (index, drumPadBank, isRecording);
-        if (this.model.getDrumDevice ().hasDrumPads () || !AbstractDrumView.COLOR_PAD_NO_CONTENT.equals (color) && !AbstractDrumView.COLOR_PAD_OFF.equals (color))
-            return color;
+        final LaunchkeyMk3Configuration config = this.surface.getConfiguration ();
+        final int note = this.scales.getDrumOffset () + index;
 
-        // No drum machine on the selected track: show the colours of the last one, except for the
-        // playing and the selected pad
-        return this.padColorMemory.getColor (this.scales.getDrumOffset () + index).orElse (color);
+        // Playing note?
+        if (this.keyManager.isKeyPressed (note))
+            return isRecording ? AbstractDrumView.COLOR_PAD_RECORD : AbstractDrumView.COLOR_PAD_PLAY;
+
+        // Selected?
+        if (this.selectedPad == index && config.isHighlightSelectedDrumPad ())
+            return AbstractDrumView.COLOR_PAD_SELECTED;
+
+        final String color;
+        if (this.model.getDrumDevice ().hasDrumPads ())
+            color = this.getPadBaseColor (drumPadBank.getItem (index), drumPadBank);
+        else
+            color = this.padColorMemory.getColor (note).orElse (null);
+        if (color != null)
+            return color;
+        return config.isTurnOffEmptyDrumPads () ? AbstractDrumView.COLOR_PAD_OFF : AbstractDrumView.COLOR_PAD_NO_CONTENT;
     }
 
 

@@ -8,12 +8,14 @@ A Bitwig Studio controller extension for the **Novation Launchkey MK3 keyboards 
 
 Everything the DrivenByMoss Launchkey Mk3 driver does (see the Novation Launchkey Mk3 chapter of the [DrivenByMoss manual](https://github.com/git-moss/DrivenByMoss/blob/master/DrivenByMoss-Manual.pdf)), plus:
 
-- **The drum pads keep their colours**: in the Drum mode, the pads show the colours of the Drum Machine on the selected track, as in DrivenByMoss. When you select a track without a Drum Machine, they keep the colours of the last one, instead of turning all yellow. The pad you play and the selected pad still light up green and blue.
+- **The drum pads keep their colours**: in the Drum mode, the pads show the colours of the Drum Machine on the selected track, as in DrivenByMoss. When you select a track without a Drum Machine, they keep the colours of the last one, instead of turning all yellow. The pads you play still light up green.
+- **No blue selected pad**: in the Drum mode, the last pad you played no longer stays lit in blue, so all pads show their Drum Machine colours. Turn it back on with *Pads → Highlight Selected Drum Pad*.
 
 ## Changes from DrivenByMoss
 
 - The extension has its own ID and is called **Launchkey Mk3 (LK3)**, so it can be installed next to DrivenByMoss.
 - **Drum pads on a track without a Drum Machine** show the colours of the last Drum Machine, instead of the dim yellow of empty pads. The colours are those of the last selected track with a Drum Machine, also if it was selected while another pad mode was active. They are remembered by note, so after **Octave Up/Down** the pads show the colours of the pads they play, if that page of the Drum Machine was seen. They don't follow changes to that Drum Machine, such as a pad's mute, while another track is selected.
+- **The selected drum pad isn't lit in blue** by default. The last pad played is still selected, and in the Steps mode (the upper button right of the pads) the sequencer still edits its note. Set *Pads → Highlight Selected Drum Pad* to *On* to light it up in blue as in DrivenByMoss.
 
 ## Installation
 
@@ -26,9 +28,17 @@ Everything the DrivenByMoss Launchkey Mk3 driver does (see the Novation Launchke
 
 You can keep DrivenByMoss installed for your other controllers. **Remove DrivenByMoss's own "Launchkey Mk3" controller from the list**, because both would take over the keyboard's DAW port.
 
+## Settings reference
+
+All of these are in Bitwig under **Settings → Controllers → (this controller)**:
+
+- **Pads**
+  - *Highlight Selected Drum Pad*: in the Drum mode, light up the selected pad (the last one played) in blue. Off by default.
+- The other DrivenByMoss Launchkey Mk3 settings for transport and workflow.
+
 ## Status
 
-Not tested on a keyboard yet. Apart from the name and ID, the only change from DrivenByMoss so far is the drum pad colours.
+The drum pad colours of tracks without a Drum Machine are tested on a Launchkey MK3 with Bitwig Studio. The *Highlight Selected Drum Pad* setting is not tested on the keyboard yet.
 
 ## Building from source
 
