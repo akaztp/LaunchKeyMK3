@@ -6,11 +6,14 @@ A Bitwig Studio controller extension for the **Novation Launchkey MK3 keyboards 
 
 ## Features
 
-For now, everything works as in DrivenByMoss's Launchkey Mk3 driver. See the Novation Launchkey Mk3 chapter of the [DrivenByMoss manual](https://github.com/git-moss/DrivenByMoss/blob/master/DrivenByMoss-Manual.pdf).
+Everything the DrivenByMoss Launchkey Mk3 driver does (see the Novation Launchkey Mk3 chapter of the [DrivenByMoss manual](https://github.com/git-moss/DrivenByMoss/blob/master/DrivenByMoss-Manual.pdf)), plus:
+
+- **The drum pads keep their colours**: in the Drum mode, the pads show the colours of the Drum Machine on the selected track, as in DrivenByMoss. When you select a track without a Drum Machine, they keep the colours of the last one, instead of turning all yellow. The pad you play and the selected pad still light up green and blue.
 
 ## Changes from DrivenByMoss
 
 - The extension has its own ID and is called **Launchkey Mk3 (LK3)**, so it can be installed next to DrivenByMoss.
+- **Drum pads on a track without a Drum Machine** show the colours of the last Drum Machine, instead of the dim yellow of empty pads. The colours are those of the last selected track with a Drum Machine, also if it was selected while another pad mode was active. They are remembered by note, so after **Octave Up/Down** the pads show the colours of the pads they play, if that page of the Drum Machine was seen. They don't follow changes to that Drum Machine, such as a pad's mute, while another track is selected.
 
 ## Installation
 
@@ -25,7 +28,7 @@ You can keep DrivenByMoss installed for your other controllers. **Remove DrivenB
 
 ## Status
 
-Not tested on a keyboard yet. The code is the same as in DrivenByMoss, apart from the name and ID.
+Not tested on a keyboard yet. Apart from the name and ID, the only change from DrivenByMoss so far is the drum pad colours.
 
 ## Building from source
 
@@ -45,6 +48,7 @@ The Bitwig Controller API reference ships with Bitwig Studio: `C:\Program Files\
 |---|---|
 | `src/main/java/pt/ztp/launchkey3` | The Launchkey Mk3 controller, derived from DrivenByMoss's `controller/novation/launchkey/maxi` |
 | `src/main/java/pt/ztp/launchkey3/bitwig` | The extension definition that Bitwig loads |
+| `src/main/java/pt/ztp/launchkey3/view/DrumPadColorMemory.java` | New: the pad colours of the last Drum Machine |
 | `src/main/java/de/mossgrabers/framework`, `.../bitwig/framework` | The DrivenByMoss framework, copied with two small patches (see [UPSTREAM.md](UPSTREAM.md)) |
 | `maven-local-repository` | purejavahidapi, which is not on Maven Central (copied from DrivenByMoss) |
 

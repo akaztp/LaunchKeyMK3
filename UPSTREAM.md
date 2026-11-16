@@ -32,6 +32,8 @@ Every patch is marked with a `Local patch (LaunchKeyMK3)` comment. They are the 
 1. `LaunchkeyMk3ControllerDefinition.java`: a new extension ID and the name `Launchkey Mk3 (LK3)`, so this extension can be installed next to DrivenByMoss. The author and version shown in Bitwig come from this project.
 2. `bitwig/LaunchkeyMk3ControllerExtensionDefinition.java`: the help link points to this project's README.
 
+The changes in behaviour are listed under "Changes from DrivenByMoss" in [README.md](README.md).
+
 ## Updating to a newer DrivenByMoss
 
 1. Clone DrivenByMoss at the new version.

@@ -597,7 +597,12 @@ public class LaunchkeyMk3ControllerSetup extends AbstractControllerSetup<Launchk
     @Override
     public void flush ()
     {
-        if (this.isReady && this.getSurface ().isDAWConnected ())
-            super.flush ();
+        if (!this.isReady || !this.getSurface ().isDAWConnected ())
+            return;
+
+        // Keep the pad colours of the last drum machine, whichever view is active
+        ((DrumView) this.getSurface ().getViewManager ().get (Views.DRUM)).rememberDrumPadColors ();
+
+        super.flush ();
     }
 }

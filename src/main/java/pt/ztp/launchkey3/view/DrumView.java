@@ -18,6 +18,8 @@ import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.clip.INoteClip;
 import de.mossgrabers.framework.daw.clip.IStepInfo;
 import de.mossgrabers.framework.daw.clip.NotePosition;
+import de.mossgrabers.framework.daw.data.IChannel;
+import de.mossgrabers.framework.daw.data.ICursorTrack;
 import de.mossgrabers.framework.daw.data.IDrumDevice;
 import de.mossgrabers.framework.daw.data.bank.IDrumPadBank;
 import de.mossgrabers.framework.utils.ButtonEvent;
@@ -26,15 +28,18 @@ import de.mossgrabers.framework.view.sequencer.AbstractDrumView;
 
 
 /**
- * The Drum view.
+ * The Drum view. While the selected track has no drum machine, the pads keep the colours of the
+ * last drum machine.
  *
  * @author Jürgen Moßgraber
+ * @author akaztp
  */
 public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, LaunchkeyMk3Configuration>
 {
-    private static final int NUM_DISPLAY_COLS = 16;
+    private static final int         NUM_DISPLAY_COLS = 16;
 
-    private boolean          isPlayMode       = true;
+    private boolean                  isPlayMode       = true;
+    private final DrumPadColorMemory padColorMemory   = new DrumPadColorMemory ();
 
 
     /**
@@ -135,6 +140,63 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
             final Optional<ColorEx> rowColor = this.getPadColor (primary, this.selectedPad);
             padGrid.lightEx (x, y, this.getStepColor (stepInfo, hilite, rowColor, channel, col, noteRow, editNotes));
         }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getDrumPadColor (final int index, final IDrumPadBank drumPadBank, final boolean isRecording)
+    {
+        final String color = super.getDrumPadColor (index, drumPadBank, isRecording);
+        if (this.model.getDrumDevice ().hasDrumPads () || !AbstractDrumView.COLOR_PAD_NO_CONTENT.equals (color) && !AbstractDrumView.COLOR_PAD_OFF.equals (color))
+            return color;
+
+        // No drum machine on the selected track: show the colours of the last one, except for the
+        // playing and the selected pad
+        return this.padColorMemory.getColor (this.scales.getDrumOffset () + index).orElse (color);
+    }
+
+
+    /**
+     * Remember the pad colours of the drum machine on the selected track, if it has one. Called on
+     * each flush, also while another view is active, so that the colours of the last drum machine
+     * are known when a track without one is selected.
+     */
+    public void rememberDrumPadColors ()
+    {
+        final IDrumDevice primary = this.model.getDrumDevice ();
+        if (!primary.hasDrumPads ())
+            return;
+
+        final IDrumPadBank drumPadBank = primary.getDrumPadBank ();
+        final int firstNote = drumPadBank.getScrollPosition ();
+        if (firstNote < 0)
+            return;
+
+        final String [] colors = new String [drumPadBank.getPageSize ()];
+        for (int i = 0; i < colors.length; i++)
+            colors[i] = this.getPadBaseColor (drumPadBank.getItem (i), drumPadBank);
+
+        final ICursorTrack cursorTrack = this.model.getCursorTrack ();
+        this.padColorMemory.remember (cursorTrack.getPosition () + ":" + cursorTrack.getName (), firstNote, colors);
+    }
+
+
+    /**
+     * Get the colour of a drum pad as AbstractDrumView.getDrumPadColor does, but without the
+     * colours of the playing and the selected pad.
+     *
+     * @param drumPad The drum pad
+     * @param drumPadBank The bank which contains the drum pad
+     * @return The colour ID, or null if the pad is empty
+     */
+    private String getPadBaseColor (final IChannel drumPad, final IDrumPadBank drumPadBank)
+    {
+        if (!drumPad.doesExist () || !drumPad.isActivated ())
+            return null;
+        if (drumPad.isMute () || drumPadBank.hasSoloedPads () && !drumPad.isSolo ())
+            return AbstractDrumView.COLOR_PAD_MUTED;
+        return this.getPadContentColor (drumPad);
     }
 
 
