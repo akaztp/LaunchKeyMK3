@@ -24,6 +24,7 @@ import pt.ztp.launchkey3.mode.LaunchkeyMk3VolumeMode;
 import pt.ztp.launchkey3.view.BrowserView;
 import pt.ztp.launchkey3.view.DeviceConfigView;
 import pt.ztp.launchkey3.view.DrumConfigView;
+import pt.ztp.launchkey3.view.DrumPadLayout;
 import pt.ztp.launchkey3.view.DrumView;
 import pt.ztp.launchkey3.view.PadModeSelectView;
 import pt.ztp.launchkey3.view.SessionView;
@@ -84,21 +85,7 @@ public class LaunchkeyMk3ControllerSetup extends AbstractControllerSetup<Launchk
 
     private static final List<ContinuousID> DEFAULT_FADER_IDS = ContinuousID.createSequentialList (ContinuousID.FADER1, 8);
 
-    // @formatter:off
-    private static final int [] DRUM_MATRIX =
-    {
-        0,  1,  2,  3,  8,  9, 10, 11,
-        4,  5,  6,  7, 12, 13, 14, 15,
-       -1, -1, -1, -1, -1, -1, -1, -1,
-       -1, -1, -1, -1, -1, -1, -1, -1,
-       -1, -1, -1, -1, -1, -1, -1, -1,
-       -1, -1, -1, -1, -1, -1, -1, -1,
-       -1, -1, -1, -1, -1, -1, -1, -1,
-       -1, -1, -1, -1, -1, -1, -1, -1
-    };
-    // @formatter:on
-
-    private boolean                         isReady           = false;
+    private boolean                        isReady           = false;
 
 
     /**
@@ -124,7 +111,7 @@ public class LaunchkeyMk3ControllerSetup extends AbstractControllerSetup<Launchk
     protected void createScales ()
     {
         this.scales = new Scales (this.valueChanger, 36, 52, 8, 2);
-        this.scales.setDrumMatrix (DRUM_MATRIX);
+        this.scales.setDrumMatrix (DrumPadLayout.createDrumMatrix ());
         this.scales.setDrumNoteEnd (52);
     }
 

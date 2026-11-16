@@ -28,8 +28,8 @@ import de.mossgrabers.framework.view.sequencer.AbstractDrumView;
 
 
 /**
- * The Drum view. While the selected track has no drum machine, the pads keep the colours of the
- * last drum machine.
+ * The Drum view. The pads play the Drum Machine pads in the order of DrumPadLayout. While the
+ * selected track has no drum machine, the pads keep the colours of the last drum machine.
  *
  * @author Jürgen Moßgraber
  * @author akaztp
@@ -69,7 +69,8 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
 
         if (this.isPlayMode)
         {
-            this.setSelectedPad (index, velocity); // 0-16
+            // The index is the position of the pad, select the Drum Machine pad which it plays
+            this.setSelectedPad (DrumPadLayout.getPad (index), velocity); // 0-15
 
             // Mark selected note
             this.keyManager.setKeyPressed (offsetY + this.getSelectedPad (), velocity);
@@ -105,8 +106,9 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
             {
                 for (int x = 0; x < 8; x++)
                 {
-                    final int index = 8 * y + x;
-                    padGrid.lightEx (x, 1 - y, this.getDrumPadColor (index, drumPadBank, false));
+                    // Light each pad in the colour of the Drum Machine pad which it plays
+                    final int position = 8 * y + x;
+                    padGrid.lightEx (x, 1 - y, this.getDrumPadColor (DrumPadLayout.getPad (position), drumPadBank, false));
                 }
             }
             return;

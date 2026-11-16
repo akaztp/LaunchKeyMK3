@@ -8,6 +8,14 @@ A Bitwig Studio controller extension for the **Novation Launchkey MK3 keyboards 
 
 Everything the DrivenByMoss Launchkey Mk3 driver does (see the Novation Launchkey Mk3 chapter of the [DrivenByMoss manual](https://github.com/git-moss/DrivenByMoss/blob/master/DrivenByMoss-Manual.pdf)), plus:
 
+- **Drum pads in a new order**: in the Drum mode, the left and right halves of each row of pads are swapped, compared to DrivenByMoss. With the octave not shifted, the pads play these Drum Machine pads (MIDI note and Bitwig's name):
+
+  | | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+  |---|---|---|---|---|---|---|---|---|
+  | **Top row** | 48 C2 | 49 C#2 | 50 D2 | 51 D#2 | 44 G#1 | 45 A1 | 46 A#1 | 47 B1 |
+  | **Bottom row** | 40 E1 | 41 F1 | 42 F#1 | 43 G1 | 36 C1 | 37 C#1 | 38 D1 | 39 D#1 |
+
+  **Octave Up/Down** moves all pads by 16 notes (4 with Shift), keeping this order. The pad lights follow the order too.
 - **The drum pads keep their colours**: in the Drum mode, the pads show the colours of the Drum Machine on the selected track, as in DrivenByMoss. When you select a track without a Drum Machine, they keep the colours of the last one, instead of turning all yellow.
 - **Choose the colour of the pads you play**: in the Drum mode, the pads you hit light up in white, green, red, blue, cyan, yellow or magenta, set in *Pads → Drum Pad Hit Colour*. Green by default, as in DrivenByMoss.
 - **No blue selected pad**: in the Drum mode, the last pad you played no longer stays lit in blue, so all pads show their Drum Machine colours. Turn it back on with *Pads → Highlight Selected Drum Pad*.
@@ -18,6 +26,7 @@ Everything the DrivenByMoss Launchkey Mk3 driver does (see the Novation Launchke
 - **Drum pads on a track without a Drum Machine** show the colours of the last Drum Machine, instead of the dim yellow of empty pads. The colours are those of the last selected track with a Drum Machine, also if it was selected while another pad mode was active. They are remembered by note, so after **Octave Up/Down** the pads show the colours of the pads they play, if that page of the Drum Machine was seen. They don't follow changes to that Drum Machine, such as a pad's mute, while another track is selected.
 - **The selected drum pad isn't lit in blue** by default. The last pad played is still selected, and in the Steps mode (the upper button right of the pads) the sequencer still edits its note. Set *Pads → Highlight Selected Drum Pad* to *On* to light it up in blue as in DrivenByMoss.
 - **The colour of the played drum pads can be chosen**, instead of always green.
+- **The drum pads are in another order**: DrivenByMoss plays C1–G1 on the bottom row and G#1–D#2 on the top row, left to right. Here the left and right halves of each row are swapped, so the bottom row plays E1–G1 then C1–D#1, and the top row C2–D#2 then G#1–B1. The order is set in `DrumPadLayout.java`.
 
 ## Installation
 
@@ -41,7 +50,7 @@ All of these are in Bitwig under **Settings → Controllers → (this controller
 
 ## Status
 
-Tested on a Launchkey MK3 with Bitwig Studio: the drum pad colours of tracks without a Drum Machine, and the *Highlight Selected Drum Pad* and *Drum Pad Hit Colour* settings.
+Tested on a Launchkey MK3 with Bitwig Studio: the new order of the drum pads, the drum pad colours of tracks without a Drum Machine, and the *Highlight Selected Drum Pad* and *Drum Pad Hit Colour* settings.
 
 ## Building from source
 
