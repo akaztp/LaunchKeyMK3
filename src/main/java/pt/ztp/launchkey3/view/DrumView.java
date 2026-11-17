@@ -29,7 +29,8 @@ import de.mossgrabers.framework.view.sequencer.AbstractDrumView;
 
 /**
  * The Drum view. The pads play the Drum Machine pads in the order of DrumPadLayout. While the
- * selected track has no drum machine, the pads keep the colours of the last drum machine.
+ * selected track has no drum machine, the pads keep the colours of the last drum machine. The
+ * Stop/Solo/Mute button lights up in the colour of the bank of the pads (see DrumBankColor).
  *
  * @author Jürgen Moßgraber
  * @author akaztp
@@ -230,7 +231,8 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
                 return this.isPlayMode ? LaunchkeyMk3ColorManager.LAUNCHKEY_COLOR_GREEN : LaunchkeyMk3ColorManager.LAUNCHKEY_COLOR_BLUE;
 
             case SCENE2:
-                return LaunchkeyMk3ColorManager.LAUNCHKEY_COLOR_GREY_LO;
+                // The Stop/Solo/Mute button shows the bank of the pads
+                return DrumBankColor.getColor (this.scales.getDrumOffset ());
 
             case ARROW_UP:
                 if (this.surface.isShiftPressed ())
