@@ -21,8 +21,8 @@ import de.mossgrabers.framework.utils.Pair;
  */
 public class LaunchkeyMk3ControllerDefinition extends DefaultControllerDefinition
 {
-    /** The name of this project, appended to the hardware model name. */
-    public static final String  PRODUCT_NAME = "LK3";
+    /** The name shown in Bitwig, which tells this extension apart from DrivenByMoss's. */
+    public static final String  NAME         = "LaunchKey Mk3 (ztp)";
 
     /** The author shown in Bitwig. */
     public static final String  AUTHOR       = "akaztp, based on DrivenByMoss by J. Moßgraber";
@@ -45,7 +45,7 @@ public class LaunchkeyMk3ControllerDefinition extends DefaultControllerDefinitio
      */
     public LaunchkeyMk3ControllerDefinition ()
     {
-        super (EXTENSION_ID, "Launchkey Mk3 (" + PRODUCT_NAME + ")", "Novation", 2, 1);
+        super (EXTENSION_ID, NAME, "Novation", 2, 1);
     }
 
 

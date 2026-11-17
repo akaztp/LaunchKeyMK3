@@ -1,4 +1,4 @@
-# LK3 — Launchkey MK3 for Bitwig Studio
+# LaunchKey Mk3 (ztp) for Bitwig Studio
 
 A Bitwig Studio controller extension for the **Novation Launchkey MK3 keyboards (25, 37, 49, 61 and 88 keys)**, based on the Launchkey Mk3 support in [DrivenByMoss](https://github.com/git-moss/DrivenByMoss).
 
@@ -22,7 +22,7 @@ Everything the DrivenByMoss Launchkey Mk3 driver does (see the Novation Launchke
 
 ## Changes from DrivenByMoss
 
-- The extension has its own ID and is called **Launchkey Mk3 (LK3)**, so it can be installed next to DrivenByMoss.
+- The extension has its own ID and is called **LaunchKey Mk3 (ztp)**, so it can be installed next to DrivenByMoss.
 - **Drum pads on a track without a Drum Machine** show the colours of the last Drum Machine, instead of the dim yellow of empty pads. The colours are those of the last selected track with a Drum Machine, also if it was selected while another pad mode was active. They are remembered by note, so after **Octave Up/Down** the pads show the colours of the pads they play, if that page of the Drum Machine was seen. They don't follow changes to that Drum Machine, such as a pad's mute, while another track is selected.
 - **The selected drum pad isn't lit in blue** by default. The last pad played is still selected, and in the Steps mode (the upper button right of the pads) the sequencer still edits its note. Set *Pads → Highlight Selected Drum Pad* to *On* to light it up in blue as in DrivenByMoss.
 - **The colour of the played drum pads can be chosen**, instead of always green.
@@ -32,7 +32,7 @@ Everything the DrivenByMoss Launchkey Mk3 driver does (see the Novation Launchke
 
 1. Download `LaunchKeyMK3.bwextension` from the [Releases](https://github.com/akaztp/LaunchKeyMK3/releases) page (or [build it](#building-from-source)).
 2. Copy it to `Documents\Bitwig Studio\Extensions` (macOS: `~/Documents/Bitwig Studio/Extensions`).
-3. In Bitwig: **Settings → Controllers → Add Controller → Novation → Launchkey Mk3 (LK3)**. Bitwig finds the keyboard's ports by itself. On Windows they are:
+3. In Bitwig: **Settings → Controllers → Add Controller → Novation → LaunchKey Mk3 (ztp)**. Bitwig finds the keyboard's ports by itself. On Windows they are:
    - MIDI in 1: `MIDIIN2 (LKMK3 MIDI)` (the DAW port)
    - MIDI in 2: `LKMK3 MIDI` (the keys)
    - MIDI out: `MIDIOUT2 (LKMK3 MIDI)`

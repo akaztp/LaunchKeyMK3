@@ -29,7 +29,7 @@ class ExtensionDefinitionTest
         assertEquals (1, definitions.size ());
 
         final ControllerExtensionDefinition definition = definitions.get (0);
-        assertEquals ("Launchkey Mk3 (LK3)", definition.getName ());
+        assertEquals ("LaunchKey Mk3 (ztp)", definition.getName ());
         assertEquals ("Novation", definition.getHardwareVendor ());
         assertTrue (definition.getAuthor ().contains ("Moßgraber"), "credits DrivenByMoss");
 
