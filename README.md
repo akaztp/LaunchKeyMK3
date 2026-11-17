@@ -23,7 +23,10 @@ Everything the DrivenByMoss Launchkey Mk3 driver does (see the Novation Launchke
   | **First pad** | 4 E-2 | 20 G#-1 | 36 C1 | 52 E2 | 68 G#3 | 84 C5 | 100 E6 |
   | **Colour** | Red | Orange | Yellow | Green | Cyan | Magenta | Blue |
 
-  After **Shift + Octave Up/Down**, which move the pads by 4 notes, the button shows the bank of the first pad. Holding the button still shows the step sequencer settings, as in DrivenByMoss (only when the selected track has a clip).
+  After **Shift + Octave Up/Down**, which move the pads by 4 notes, the button shows the bank of the first pad. In the Steps mode, holding the button shows the step sequencer settings, as in DrivenByMoss (only when the selected track has a clip). In the Play mode, it turns the pads into toggles (see below).
+- **Toggle drum notes with Stop/Solo/Mute**: in the Play mode of the Drum mode, **Stop/Solo/Mute** turns the pads into on/off toggles. A pad becomes a toggle as soon as it is down together with the button: a pad you were already holding when you pressed the button, or a pad you press while holding it. When you let go of the pad, it doesn't send a note off, so its note plays on, also if you let go of the button first. The pad stays lit in the hit colour while its note plays on. The next press of the pad stops its note, whether you hold the button or not.
+
+  A pad stops only the note that it plays: after **Octave Up/Down**, go back to the bank of the held note to stop it. Held notes also keep playing when you leave the Drum mode, and their pads stop them when you come back.
 - **The drum pads keep their colours**: in the Drum mode, the pads show the colours of the Drum Machine on the selected track, as in DrivenByMoss. When you select a track without a Drum Machine, they keep the colours of the last one, instead of turning all yellow.
 - **Choose the colour of the pads you play**: in the Drum mode, the pads you hit light up in white, green, red, blue, cyan, yellow or magenta, set in *Pads → Drum Pad Hit Colour*. Green by default, as in DrivenByMoss.
 - **No blue selected pad**: in the Drum mode, the last pad you played no longer stays lit in blue, so all pads show their Drum Machine colours. Turn it back on with *Pads → Highlight Selected Drum Pad*.
@@ -35,7 +38,7 @@ Everything the DrivenByMoss Launchkey Mk3 driver does (see the Novation Launchke
 - **The selected drum pad isn't lit in blue** by default. The last pad played is still selected, and in the Steps mode (the upper button right of the pads) the sequencer still edits its note. Set *Pads → Highlight Selected Drum Pad* to *On* to light it up in blue as in DrivenByMoss.
 - **The colour of the played drum pads can be chosen**, instead of always green.
 - **The drum pads are in another order**: DrivenByMoss plays C1–G1 on the bottom row and G#1–D#2 on the top row, left to right. Here the left and right halves of each row are swapped, so the bottom row plays E1–G1 then C1–D#1, and the top row C2–D#2 then G#1–B1. The order is set in `DrumPadLayout.java`.
-- **The Stop/Solo/Mute button in the Drum mode** lights up in the colour of the bank of the pads, instead of dim grey. What it does when held is unchanged.
+- **The Stop/Solo/Mute button in the Drum mode** lights up in the colour of the bank of the pads, instead of dim grey. Holding it shows the step sequencer settings only in the Steps mode; in DrivenByMoss it does so in the Play mode too. In the Play mode, it turns the pads which are down while it is held into on/off toggles.
 
 ## Installation
 
@@ -59,7 +62,7 @@ All of these are in Bitwig under **Settings → Controllers → (this controller
 
 ## Status
 
-Tested on a Launchkey MK3 with Bitwig Studio: the new order of the drum pads, the bank colours of the Stop/Solo/Mute button, the drum pad colours of tracks without a Drum Machine, and the *Highlight Selected Drum Pad* and *Drum Pad Hit Colour* settings.
+Tested on a Launchkey MK3 with Bitwig Studio: the new order of the drum pads, the bank colours of the Stop/Solo/Mute button, the drum pad colours of tracks without a Drum Machine, the *Highlight Selected Drum Pad* and *Drum Pad Hit Colour* settings, and toggling drum notes with Stop/Solo/Mute.
 
 ## Building from source
 

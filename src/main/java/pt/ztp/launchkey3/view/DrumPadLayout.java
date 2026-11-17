@@ -59,6 +59,29 @@ public final class DrumPadLayout
 
 
     /**
+     * Get the note which the Launchkey sends for a pad in the Drum mode.
+     *
+     * @param position The position of the pad, 0-7 on the bottom row and 8-15 on the top row
+     * @return The MIDI note
+     */
+    public static int getLaunchkeyNote (final int position)
+    {
+        return LaunchkeyPadGrid.translateToController (Views.DRUM, FIRST_GRID_NOTE + position)[1];
+    }
+
+
+    /**
+     * Get the MIDI channel on which the Launchkey sends the pads in the Drum mode.
+     *
+     * @return The MIDI channel, 0-15
+     */
+    public static int getLaunchkeyChannel ()
+    {
+        return LaunchkeyPadGrid.translateToController (Views.DRUM, FIRST_GRID_NOTE)[0];
+    }
+
+
+    /**
      * Create the drum matrix for the Scales: for each note which the Launchkey sends in the Drum
      * mode (minus 36), the Drum Machine pad to play.
      *
@@ -69,10 +92,7 @@ public final class DrumPadLayout
         final int [] matrix = new int [64];
         Arrays.fill (matrix, -1);
         for (int position = 0; position < NUM_PADS; position++)
-        {
-            final int launchkeyNote = LaunchkeyPadGrid.translateToController (Views.DRUM, FIRST_GRID_NOTE + position)[1];
-            matrix[launchkeyNote - FIRST_GRID_NOTE] = PAD_AT_POSITION[position];
-        }
+            matrix[getLaunchkeyNote (position) - FIRST_GRID_NOTE] = PAD_AT_POSITION[position];
         return matrix;
     }
 }

@@ -5,6 +5,7 @@
 
 package pt.ztp.launchkey3.view;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,7 @@ import de.mossgrabers.framework.daw.data.IChannel;
 import de.mossgrabers.framework.daw.data.ICursorTrack;
 import de.mossgrabers.framework.daw.data.IDrumDevice;
 import de.mossgrabers.framework.daw.data.bank.IDrumPadBank;
+import de.mossgrabers.framework.daw.midi.MidiConstants;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.view.Views;
 import de.mossgrabers.framework.view.sequencer.AbstractDrumView;
@@ -30,7 +32,8 @@ import de.mossgrabers.framework.view.sequencer.AbstractDrumView;
 /**
  * The Drum view. The pads play the Drum Machine pads in the order of DrumPadLayout. While the
  * selected track has no drum machine, the pads keep the colours of the last drum machine. The
- * Stop/Solo/Mute button lights up in the colour of the bank of the pads (see DrumBankColor).
+ * Stop/Solo/Mute button lights up in the colour of the bank of the pads (see DrumBankColor). In the
+ * Play mode, the pads which are down while it is held work as toggles (see DrumNoteHold).
  *
  * @author Jürgen Moßgraber
  * @author akaztp
@@ -41,6 +44,7 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
 
     private boolean                  isPlayMode       = true;
     private final DrumPadColorMemory padColorMemory   = new DrumPadColorMemory ();
+    private final DrumNoteHold       noteHold         = new DrumNoteHold ();
 
 
     /**
@@ -62,10 +66,15 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
     @Override
     public void onGridNote (final int note, final int velocity)
     {
+        final int index = note - this.surface.getPadGrid ().getStartNote ();
+
+        // Follow the pads for the note hold also if the selected track changed meanwhile, so that
+        // no key stays filtered out
+        final boolean isNoteStopped = this.isPlayMode && this.updateNoteHold (index, velocity > 0);
+
         if (!this.model.canSelectedTrackHoldNotes ())
             return;
 
-        final int index = note - this.surface.getPadGrid ().getStartNote ();
         final int offsetY = this.scales.getDrumOffset ();
 
         if (this.isPlayMode)
@@ -73,8 +82,9 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
             // The index is the position of the pad, select the Drum Machine pad which it plays
             this.setSelectedPad (DrumPadLayout.getPad (index), velocity); // 0-15
 
-            // Mark selected note
-            this.keyManager.setKeyPressed (offsetY + this.getSelectedPad (), velocity);
+            // Mark selected note, unless the pad stopped its held note. The pad of a held note
+            // stays lit while the note plays on, see getDrumPadColor.
+            this.keyManager.setKeyPressed (offsetY + this.getSelectedPad (), isNoteStopped ? 0 : velocity);
         }
         else if (this.isActive ())
         {
@@ -90,6 +100,75 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
     public void updateNoteMapping ()
     {
         this.delayedUpdateNoteMapping (this.model.canSelectedTrackHoldNotes () && this.isPlayMode ? this.scales.getDrumMatrix () : EMPTY_TABLE);
+    }
+
+
+    /**
+     * As AbstractView.delayedUpdateNoteMapping, but applies the note hold to the key translation
+     * table.
+     */
+    @Override
+    protected void delayedUpdateNoteMapping (final int [] matrix)
+    {
+        this.surface.scheduleTask (() -> {
+            this.keyManager.setNoteMatrix (matrix);
+            if (matrix.length == 128)
+            {
+                this.noteHold.setKeyTranslationTable (this.scales.translateMatrixToGrid (matrix));
+                this.surface.setKeyTranslationTable (this.noteHold.getKeyTranslationTable ());
+            }
+        }, 6);
+    }
+
+
+    /**
+     * Send the key translation table with the note hold to the note input, if it changed.
+     */
+    private void applyNoteMapping ()
+    {
+        final int [] table = this.noteHold.getKeyTranslationTable ();
+        if (!Arrays.equals (table, this.surface.getKeyTranslationTable ()))
+            this.surface.setKeyTranslationTable (table);
+    }
+
+
+    /**
+     * Tell the note hold that a pad was pressed or released. If the pad was pressed to stop its
+     * held note, Bitwig has dropped the note on; send a note off for the held note instead.
+     *
+     * @param position The position of the pad
+     * @param isPressed True if pressed, false if released
+     * @return True if the pad was pressed to stop its held note
+     */
+    private boolean updateNoteHold (final int position, final boolean isPressed)
+    {
+        boolean isNoteStopped = false;
+        if (isPressed)
+        {
+            final int heldNote = this.noteHold.padPressed (position);
+            if (heldNote >= 0)
+            {
+                this.surface.sendMidiEvent (MidiConstants.CMD_NOTE_OFF + DrumPadLayout.getLaunchkeyChannel (), heldNote, 0);
+                isNoteStopped = true;
+            }
+        }
+        else
+            this.noteHold.padReleased (position);
+
+        this.applyNoteMapping ();
+        return isNoteStopped;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void onDeactivate ()
+    {
+        super.onDeactivate ();
+
+        // The next view sets its own key translation table. The held notes play on, and their pads
+        // stop them when the Drum mode is back.
+        this.noteHold.reset ();
     }
 
 
@@ -157,8 +236,8 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
         final LaunchkeyMk3Configuration config = this.surface.getConfiguration ();
         final int note = this.scales.getDrumOffset () + index;
 
-        // Playing note?
-        if (this.keyManager.isKeyPressed (note))
+        // Playing note, or held by the Stop/Solo/Mute button?
+        if (this.keyManager.isKeyPressed (note) || this.noteHold.isNoteHeld (note))
             return isRecording ? AbstractDrumView.COLOR_PAD_RECORD : config.getDrumPadHitColor ().getColorId ();
 
         // Selected?
@@ -254,6 +333,12 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
     @Override
     public void onButton (final ButtonID buttonID, final ButtonEvent event, final int velocity)
     {
+        if (buttonID == ButtonID.SCENE2)
+        {
+            this.onStopSoloMuteButton (event);
+            return;
+        }
+
         if (event != ButtonEvent.DOWN)
             return;
 
@@ -263,13 +348,9 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
         {
             case SCENE1:
                 this.isPlayMode = !this.isPlayMode;
+                this.noteHold.reset ();
                 this.updateNoteMapping ();
                 this.surface.getDisplay ().notify (this.isPlayMode ? "Play / Select" : "Steps");
-                break;
-
-            case SCENE2:
-                if (this.isActive ())
-                    this.surface.getViewManager ().setActive (Views.SHIFT);
                 break;
 
             case ARROW_UP:
@@ -284,6 +365,32 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
                 // Not used
                 break;
         }
+    }
+
+
+    /**
+     * The Stop/Solo/Mute button: in the Play mode, the pads which are down while it is held work as
+     * toggles. In the Steps mode, it shows the step sequencer settings while held.
+     *
+     * @param event The button event
+     */
+    private void onStopSoloMuteButton (final ButtonEvent event)
+    {
+        if (event == ButtonEvent.DOWN)
+        {
+            if (this.isPlayMode)
+            {
+                this.noteHold.turnOn ();
+                this.applyNoteMapping ();
+            }
+            else if (this.isActive ())
+                this.surface.getViewManager ().setActive (Views.SHIFT);
+            return;
+        }
+
+        // The pads which are still down stay toggles, so the key translation table doesn't change
+        if (event == ButtonEvent.UP)
+            this.noteHold.turnOff ();
     }
 
 
