@@ -229,8 +229,9 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
 
     /**
      * As AbstractDrumView.getDrumPadColor, but the played pads light up in the colour set in the
-     * configuration, the selected pad only lights up if set in the configuration, and while the
-     * selected track has no drum machine, the pads show the colours of the last one.
+     * configuration, the selected pad only lights up if set in the configuration, while the
+     * selected track has no drum machine, the pads show the colours of the last one, and the pads
+     * without a sound (empty or deactivated) are off instead of dim yellow.
      */
     @Override
     protected String getDrumPadColor (final int index, final IDrumPadBank drumPadBank, final boolean isRecording)
@@ -253,7 +254,8 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
             color = this.padColorMemory.getColor (note).orElse (null);
         if (color != null)
             return color;
-        return config.isTurnOffEmptyDrumPads () ? AbstractDrumView.COLOR_PAD_OFF : AbstractDrumView.COLOR_PAD_NO_CONTENT;
+        // No sound, no colour
+        return AbstractDrumView.COLOR_PAD_OFF;
     }
 
 

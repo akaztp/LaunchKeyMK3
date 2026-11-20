@@ -345,7 +345,10 @@ public class LaunchkeyMk3ControllerSetup extends AbstractControllerSetup<Launchk
         this.addButton (surface, buttonID, label, (event, velocity) -> {
             viewSelectCommand.executeNormal (event);
             if (event == ButtonEvent.DOWN)
+            {
                 surface.getPadGrid ().setView (view);
+                surface.flushPadLights ();
+            }
         }, 15, LaunchkeyMk3ControlSurface.LAUNCHKEY_VIEW_SELECT, viewIndex, false, null);
         final IHwLight light = surface.createLight (outputID, () -> surface.getViewManager ().isActive (view) ? ColorEx.ORANGE : ColorEx.DARK_ORANGE, color -> {
             // Intentionally empty

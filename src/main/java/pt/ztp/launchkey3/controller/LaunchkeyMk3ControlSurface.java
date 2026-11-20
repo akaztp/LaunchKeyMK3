@@ -258,6 +258,20 @@ public class LaunchkeyMk3ControlSurface extends AbstractControlSurface<Launchkey
 
 
     /**
+     * Send the lights of all pads again. Each pad mode lights the pads with its own MIDI notes, but
+     * the views share the pad states, and a pad's light is only sent when its state changes. So after
+     * the pad mode changed, a pad whose state is the same as in the previous view would keep an old
+     * colour, for example an empty drum pad where the Session mode has an empty clip slot.
+     */
+    public void flushPadLights ()
+    {
+        final int size = this.padGrid.getRows () * this.padGrid.getCols ();
+        for (int i = 0; i < size; i++)
+            this.getButton (ButtonID.get (ButtonID.PAD1, i)).getLight ().forceFlush ();
+    }
+
+
+    /**
      * Activate a Launchkey knob mode.
      *
      * @param knobMode A knob mode (use KNOB_MODE_* constants)
