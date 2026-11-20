@@ -124,6 +124,8 @@ public class LaunchkeyMk3ColorManager extends ColorManager
         this.registerColorIndex (AbstractDrumView.COLOR_PAD_NO_CONTENT, LAUNCHKEY_COLOR_YELLOW_LO);
         for (final DrumPadHitColor hitColor: DrumPadHitColor.values ())
             this.registerColorIndex (hitColor.getColorId (), hitColor.getPaletteIndex ());
+        for (int index = 0; index < LaunchkeyPalette.NUM_COLORS; index++)
+            this.registerColorIndex (LaunchkeyPalette.getColorId (index), index);
 
         this.registerColorIndex (AbstractPlayView.COLOR_PLAY, LAUNCHKEY_COLOR_GREEN_HI);
         this.registerColorIndex (AbstractPlayView.COLOR_RECORD, LAUNCHKEY_COLOR_RED_HI);

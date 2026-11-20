@@ -12,6 +12,7 @@ import java.util.Optional;
 import pt.ztp.launchkey3.LaunchkeyMk3Configuration;
 import pt.ztp.launchkey3.controller.LaunchkeyMk3ColorManager;
 import pt.ztp.launchkey3.controller.LaunchkeyMk3ControlSurface;
+import pt.ztp.launchkey3.controller.LaunchkeyPalette;
 import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.controller.grid.IPadGrid;
@@ -30,8 +31,9 @@ import de.mossgrabers.framework.view.sequencer.AbstractDrumView;
 
 
 /**
- * The Drum view. The pads play the Drum Machine pads in the order of DrumPadLayout. While the
- * selected track has no drum machine, the pads keep the colours of the last drum machine. The
+ * The Drum view. The pads play the Drum Machine pads in the order of DrumPadLayout, and light up in
+ * the palette colours closest to theirs (see LaunchkeyPalette). While the selected track has no
+ * drum machine, the pads keep the colours of the last drum machine. The
  * Stop/Solo/Mute button lights up in the colour of the bank of the pads (see DrumBankColor). In the
  * Play mode, the pads which are down while it is held work as toggles (see DrumNoteHold).
  *
@@ -295,6 +297,37 @@ public class DrumView extends AbstractDrumView<LaunchkeyMk3ControlSurface, Launc
         if (drumPad.isMute () || drumPadBank.hasSoloedPads () && !drumPad.isSolo ())
             return AbstractDrumView.COLOR_PAD_MUTED;
         return this.getPadContentColor (drumPad);
+    }
+
+
+    /**
+     * As AbstractDrumView.getPadContentColor, but the pad lights up in the Launchkey palette colour
+     * which looks closest to the colour of the Drum Machine pad, instead of first rounding it to one
+     * of 28 Bitwig colours.
+     */
+    @Override
+    protected String getPadContentColor (final IChannel drumPad)
+    {
+        return LaunchkeyPalette.getNearestColorId (drumPad.getColor ());
+    }
+
+
+    /**
+     * As AbstractSequencerView.getStepColor, but the steps with notes light up in the Launchkey
+     * palette colour which looks closest to the colour of the Drum Machine pad, as the pads do.
+     */
+    @Override
+    protected String getStepColor (final IStepInfo stepInfo, final boolean highlight, final Optional<ColorEx> rowColor, final int channel, final int step, final int note, final List<NotePosition> editNotes)
+    {
+        // Without the row colour, the steps which would show it get COLOR_CONTENT(_CONT)
+        final String color = super.getStepColor (stepInfo, highlight, Optional.empty (), channel, step, note, editNotes);
+        if (rowColor.isEmpty ())
+            return color;
+        if (COLOR_CONTENT.equals (color))
+            return LaunchkeyPalette.getNearestColorId (rowColor.get ());
+        if (COLOR_CONTENT_CONT.equals (color))
+            return LaunchkeyPalette.getNearestColorId (ColorEx.darker (rowColor.get ()));
+        return color;
     }
 
 
